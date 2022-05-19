@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core'
+import { Connectivity, ObservableArray } from '@nativescript/core';
 
 import { Item } from './item'
 import { ItemService } from './item.service'
@@ -8,11 +9,18 @@ import { ItemService } from './item.service'
   templateUrl: './items.component.html',
 })
 export class ItemsComponent implements OnInit {
-  items: Array<Item>
+  items: ObservableArray<string>
 
-  constructor(private itemService: ItemService) {}
+  constructor(private itemService: ItemService) {
+
+    Connectivity.startMonitoring((c) => {
+      console.log("Connectivity Callback", Connectivity.connectionType[c]);
+      this.items.push(Connectivity.connectionType[c]);
+    });
+
+  }
 
   ngOnInit(): void {
-    this.items = this.itemService.getItems()
+    this.items = new ObservableArray<string>();
   }
 }
